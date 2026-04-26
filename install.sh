@@ -37,22 +37,24 @@ if [ -n "$SHELL_CONFIG" ]; then
     echo "" >> "$SHELL_CONFIG"
     echo "# MICLI" >> "$SHELL_CONFIG"
     echo "alias micli='$INSTALL_DIR/micli.sh'" >> "$SHELL_CONFIG"
-    echo "export PATH=\$PATH:$INSTALL_DIR" >> "$SHELL_CONFIG"
-    
-    # Source the config
-    if [ -n "$BASH_VERSION" ]; then
-        source "$SHELL_CONFIG" 2>/dev/null || true
-    elif [ -n "$ZSH_VERSION" ]; then
-        source "$SHELL_CONFIG" 2>/dev/null || true
-    fi
+    source "$SHELL_CONFIG" 2>/dev/null || true
 fi
 
 echo ""
-echo "✓ MICLI installed successfully!"
+echo "✓ MICLI installed!"
 echo ""
-echo "Next steps:"
-echo "  1. Run: micli --setup"
-echo "  2. Enter your VPS details"
-echo "  3. Type: micli"
-echo ""
-echo "Your AI agent is ready! 🚀"
+
+# Check if SSH key exists
+if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
+    echo "Setting up passwordless SSH..."
+    ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ed25519" -N ""
+    echo ""
+    echo "Now copy your key to the VPS:"
+    echo "  ssh-copy-id -i $HOME/.ssh/id_ed25519.pub administrator@108.181.162.206"
+    echo ""
+    echo "Then just type: micli"
+else
+    echo "✓ SSH key found"
+    echo ""
+    echo "Just type: micli"
+fi
